@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const base = axios.create({ baseURL: 'https://backend-webapps-esilv.onrender.com/'});
+const base = axios.create({ baseURL: 'https://test-pi2.onrender.com/'});
 
 export const login = async (username, password) => {
     try {
@@ -12,7 +12,6 @@ export const login = async (username, password) => {
         return { success: false, error: error.response }
     }
 }
-
 export const register = async (username, password) => {
     try {
         const response = await base.post('users/register', {username: username, password: password});
@@ -22,7 +21,6 @@ export const register = async (username, password) => {
         return { success: false, error: error.response }
     }
 }
-
 export const userRole = async () => {
     try {
         const response = await base.get('users/me', {
@@ -35,46 +33,26 @@ export const userRole = async () => {
         return error.response;
     }
 }
-
-export const fetchFilmInfos = async (filmId) => {
-    const {data} = await base.get(`locations/${filmId}`, {
+export const fetchLastMesure = async()=>{
+    const {data} = await base.get(`mesure/last/last`,{
         headers: {
             'Authorization': `Bearer ${localStorage.getItem("token")}`,
         }
     });
     return data
 }
-
-export const postFilm = async (filmName, filmType, filmDirectorName, filmProducerName, address, district, year, filmId) => {
-    try {
-        await base.patch(`locations/${filmId}`, {
-            filmName: filmName,
-            filmType: filmType,
-            filmDirectorName: filmDirectorName,
-            filmProducerName: filmProducerName,
-            address: address,
-            district: district,
-            year: year
-        }, {
-            headers: {
-                'Authorization': `Bearer ${localStorage.getItem('token')}`,
+export const SendDownlink = async(message)=> {
+    try{
+        const response = await base.post(`downlink`,{
+            message:message
+        },{
+            headers:{
+                'Authorization':`Bearer ${localStorage.getItem('token')}`,
             }
         });
-        return { success: true };
-    } catch (error) {
-        return { success: false, error: error.response }
-    }
-}
-
-export const deleteFilm = async (filmId) => {
-    try {
-        await base.delete(`locations/${filmId}`, {
-            headers: {
-                'Authorization': `Bearer ${localStorage.getItem('token')}`,
-            }
-        });
-        return { success: true };
-    } catch (error) {
-        return { success: false, error: error.response }
+        return {success: true};
+    }catch(error){
+        console.log(error);
+        return {success:false, error:error.response}
     }
 }

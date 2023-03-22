@@ -1,15 +1,16 @@
 <template>
-  <h2>Films :</h2>
+  <h2>Dernière mesure:</h2>
   <div>
-    <div v-for="film in currentFilms" :key="film._id">
-      <button @click="goToFilmDetails(film._id)">{{ film.filmName }}</button>
+    <div v-for="mesure in currentMesure" :key="mesure._id">
+      <h4>Humidité dans le sol : {{mesure.humiditesol}}</h4>
+      <h4>Humidité dans l'aire : {{mesure.humiditeaire}}</h4>
+      <h4>Température de l'aire : {{mesure.temperaturaire}}</h4>
+      <h4>Luminosité : {{mesure.luminosite}}</h4>
     </div>
     <br />
     <div>
-      <button @click="previousPage">Previous</button>
-      <button @click="nextPage">Next</button>
       <div v-if="role === 'admin'">
-        <button @click="createFilm">Add Film</button>
+        <button @click="confirmSendDownlink">Send test message</button>
       </div>
     </div>
   </div>
@@ -17,50 +18,45 @@
 
 <script>
 import axios from 'axios';
-import {userRole} from "/src/api.js";
+import { fetchLastMesure } from '../api';
+import {userRole, SendDownlink} from "/src/api.js";
 export default {
   data() {
     return {
       token: localStorage.getItem('token'),
-      films: [],
-      currentPage: 1,
-      itemsPerPage: 10,
+      mesures: [],
       role: '',
     };
   },
   computed: {
-    currentFilms() {
-      const start = (this.currentPage - 1) * this.itemsPerPage;
-      const end = start + this.itemsPerPage;
-      return this.films.slice(start, end);
+    currentMesure() {
+      return this.mesures;
     },
   },
   async mounted() {
-    await this.fetchFilms();
+    await this.fetchLastMesure();
     this.role = await userRole();
   },
   methods: {
-    async fetchFilms() {
-      const { data } = await axios.get('https://backend-webapps-esilv.onrender.com/locations', {
+    async fetchLastMesure() {
+      const { data } = await axios.get('https://test-pi2.onrender.com/mesures/last', {
         headers: {
           'Authorization': `Bearer ${this.token}`,
         }});
-      this.films = data;
+      this.mesures = data;
     },
-    goToFilmDetails(filmId) {
-      this.$router.push(`/filmDetails/${filmId}`);
-    },
-    createFilm() {
-      this.$router.push('/createFilm');
-    },
-    previousPage() {
-      if (this.currentPage > 1) {
-        this.currentPage--;
+    async confirmSendDownlink() {
+      if(confirm("Are you sure you want to send this message ?")) {
+        await this.SendDownlink();
       }
     },
-    nextPage() {
-      if (this.currentPage < Math.ceil(this.films.length / this.itemsPerPage)) {
-        this.currentPage++;
+    async SendDownlink() {
+      let response = await SendDownlink("test");
+      if(response.success) {
+        alert('Message envoyé !');
+      } else {
+        console.log(response.success);
+        alert('An error occurred, please try again later');
       }
     },
   },
