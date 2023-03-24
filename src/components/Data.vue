@@ -3,8 +3,8 @@
   <div>
     <div v-for="mesure in currentMesure" :key="mesure._id">
       <h4>Humidité dans le sol : {{mesure.humiditesol}}</h4>
-      <h4>Humidité dans l'aire : {{mesure.humiditeaire}}</h4>
-      <h4>Température de l'aire : {{mesure.temperaturaire}}</h4>
+      <h4>Humidité dans l'air : {{mesure.humiditeaire}}</h4>
+      <h4>Température de l'air : {{mesure.temperaturaire}}</h4>
       <h4>Luminosité : {{mesure.luminosite}}</h4>
     </div>
     <br />
@@ -46,7 +46,7 @@ export default {
       this.mesures = data;
     },
     async confirmSendDownlink() {
-      if(confirm("Are you sure you want to send this message ?")) {
+      if(confirm("Are you sure you want to send 'test' to the MKRWAN ?")) {
         await this.SendDownlink();
       }
     },
