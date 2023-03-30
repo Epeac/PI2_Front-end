@@ -3,8 +3,8 @@
 
 
 Pour lancer le code, veuillez lancer ces commandes
-```npm install```  
-```npm run dev```
+`npm install`  
+`npm run dev`
 
 ---
 #### Here are some important infos :
